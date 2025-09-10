@@ -59,28 +59,30 @@ class Scanner:
         current_char: str
 
         while True:
-            current_char = self._next_char()
             if self._is_end_of_file():
                 return None
+
+            current_char = self._next_char()
 
             if self.state == 0:
                 print('entrou em state 0')
                 if self._is_space(current_char):
                     continue
-                if self._is_letter(current_char):
+                elif self._is_letter(current_char):
                     print('entrou em is letter')
                     content_buffer += current_char
                     self.state = 1
 
-            if self.state == 1:
+            elif self.state == 1:
                 if self._is_letter(current_char) or self._is_digit(current_char):
                     content_buffer += current_char
                     self.state = 1
                 else:
                     self.state = 2
 
-            if self.state == 2:
+            elif self.state == 2:
                 self.back()
+                self.state = 0
                 return Token(TokenType.IDENTIFIER, content_buffer)
 
     def back(self):

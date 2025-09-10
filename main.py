@@ -22,11 +22,11 @@ def main():
             print(sc)
             print(sc.source)
 
-            for i in range(2):
+            while True:
                 tk = sc.next_token()
                 print(tk)
-        # if tk is None:
-        #   break
+                if tk is None:
+                  break
 
     except FileNotFoundError:
         print(f"Error: The file '{file_path}' was not found.")
