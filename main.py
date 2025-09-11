@@ -19,7 +19,6 @@ def main():
     try:
         with open(file_path, 'r') as file:
             sc = Scanner(file)
-            print(sc)
             print(sc.source)
 
             while True:

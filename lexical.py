@@ -1,6 +1,8 @@
 ## LEXICAL
 
 from typing import TextIO
+
+from errors import LexicalError
 from utils import TokenType
 
 
@@ -31,6 +33,10 @@ class Scanner:
         return 'a' <= c <= 'z' or 'A' <= c <= 'Z'
 
     @staticmethod
+    def _is_underscore(c: str) -> bool:
+        return c == '_'
+
+    @staticmethod
     def _is_digit(c: str) -> bool:
         return '0' <= c <= '9'
 
@@ -39,8 +45,12 @@ class Scanner:
         return c == '+' or c == '-' or c == '*' or c == '/'
 
     @staticmethod
-    def _is_rel_operator(c: str) -> bool:
-        return c == '>' or c == '<' or c == '==' or c == '<=' or c == '>=' or c == "!"
+    def _is_rel_operator_start(c: str) -> bool:
+        return c == '>' or c == '<' or c == '=' or c == "!"
+
+    @staticmethod
+    def _is_assignment_operator(c: str) -> bool:
+        return c == '='
 
     @staticmethod
     def _is_space(c: str) -> bool:
@@ -60,23 +70,35 @@ class Scanner:
 
         while True:
             if self._is_end_of_file():
+                if content_buffer:
+                    if self.state == 1:
+                        self.state = 0
+                        return Token(TokenType.IDENTIFIER, content_buffer)
+                    elif self.state == 3:
+                        self.state = 0
+                        return Token(TokenType.NUMBER, content_buffer)
                 return None
 
             current_char = self._next_char()
 
             if self.state == 0:
-                print('entrou em state 0')
                 if self._is_space(current_char):
                     continue
-                elif self._is_letter(current_char):
-                    print('entrou em is letter')
+                elif self._is_letter(current_char) or self._is_underscore(current_char):
                     content_buffer += current_char
                     self.state = 1
+                elif self._is_digit(current_char):
+                    content_buffer += current_char
+                    self.state = 3
+                elif self._is_math_operator(current_char):
+                    return Token(TokenType.MATH_OPERATOR, current_char)
+                elif self._is_assignment_operator(current_char):
+                    return Token(TokenType.ASSIGNMENT, current_char)
 
+            # States for IDENTIFIER
             elif self.state == 1:
                 if self._is_letter(current_char) or self._is_digit(current_char):
                     content_buffer += current_char
-                    self.state = 1
                 else:
                     self.state = 2
 
@@ -84,6 +106,23 @@ class Scanner:
                 self.back()
                 self.state = 0
                 return Token(TokenType.IDENTIFIER, content_buffer)
+
+            # States for NUMBER
+            elif self.state == 3:
+                if self._is_digit(current_char):
+                    content_buffer += current_char
+                else:
+                    if (
+                            self._is_space(current_char)
+                            or self._is_math_operator(current_char)
+                            or self._is_assignment_operator(current_char)
+                            # or self._is_rel_operator_start(current_char)
+                    ):
+                        self.back()
+                        self.state = 0
+                        return Token(TokenType.NUMBER, content_buffer)
+                    else:
+                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'")
 
     def back(self):
         self.pos -= 1
