@@ -8,3 +8,5 @@ class TokenType(Enum):
   MATH_OPERATOR = 2
   REL_OPERATOR = 3
   ASSIGNMENT = 4
+  LEFT_PAREN = 5
+  RIGHT_PAREN = 6

@@ -51,6 +51,14 @@ class Scanner:
     @staticmethod
     def _is_assignment_operator(c: str) -> bool:
         return c == '='
+    
+    @staticmethod
+    def _is_left_paren(c: str) -> bool:
+        return c == '('
+    
+    @staticmethod
+    def _is_right_paren(c: str) -> bool:
+        return c == ')'
 
     @staticmethod
     def _is_space(c: str) -> bool:
@@ -94,18 +102,36 @@ class Scanner:
                     return Token(TokenType.MATH_OPERATOR, current_char)
                 elif self._is_assignment_operator(current_char):
                     return Token(TokenType.ASSIGNMENT, current_char)
+                elif self._is_left_paren(current_char):
+                    return Token(TokenType.LEFT_PAREN, current_char)
+                elif self._is_right_paren(current_char):
+                    return Token(TokenType.RIGHT_PAREN, current_char)
 
             # States for IDENTIFIER
             elif self.state == 1:
                 if self._is_letter(current_char) or self._is_digit(current_char):
                     content_buffer += current_char
                 else:
-                    self.state = 2
+                    # Any character that ends IDENTIFIER
+                    # self.state = 2
+                    if (
+                        self._is_space(current_char)
+                        or self._is_math_operator(current_char)
+                        or self._is_assignment_operator(current_char)
+                        or self._is_left_paren(current_char)
+                        or self._is_right_paren(current_char)
+                    ):
+                        self.back()
+                        self.state = 0
+                        return Token(TokenType.IDENTIFIER, content_buffer)
+                    else:
+                        raise LexicalError(f"Invalid character '{current_char}' after identifier '{content_buffer}'")
+                        
 
-            elif self.state == 2:
-                self.back()
-                self.state = 0
-                return Token(TokenType.IDENTIFIER, content_buffer)
+            # elif self.state == 2:
+            #     self.back()
+            #     self.state = 0
+            #     return Token(TokenType.IDENTIFIER, content_buffer)
 
             # States for NUMBER
             elif self.state == 3:
@@ -117,6 +143,8 @@ class Scanner:
                             or self._is_math_operator(current_char)
                             or self._is_assignment_operator(current_char)
                             # or self._is_rel_operator_start(current_char)
+                            or self._is_left_paren(current_char)
+                            or self._is_right_paren(current_char)
                     ):
                         self.back()
                         self.state = 0
