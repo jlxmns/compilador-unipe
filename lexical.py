@@ -82,7 +82,9 @@ class Scanner:
                     if self.state == 1:
                         self.state = 0
                         return Token(TokenType.IDENTIFIER, content_buffer)
-                    elif self.state == 3:
+                    elif self.state == 3 or self.state == 4:
+                        if content_buffer.endswith('.'):
+                            raise LexicalError(f"Invalid number '{content_buffer}'")
                         self.state = 0
                         return Token(TokenType.NUMBER, content_buffer)
                 return None
@@ -98,6 +100,9 @@ class Scanner:
                 elif self._is_digit(current_char):
                     content_buffer += current_char
                     self.state = 3
+                elif current_char == '.':
+                    content_buffer += current_char
+                    self.state = 4
                 elif self._is_math_operator(current_char):
                     return Token(TokenType.MATH_OPERATOR, current_char)
                 elif self._is_assignment_operator(current_char):
@@ -134,9 +139,12 @@ class Scanner:
             #     return Token(TokenType.IDENTIFIER, content_buffer)
 
             # States for NUMBER
-            elif self.state == 3:
+            elif self.state == 3: # before '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
+                elif current_char == '.':
+                    content_buffer += current_char
+                    self.state = 4
                 else:
                     if (
                             self._is_space(current_char)
@@ -145,6 +153,27 @@ class Scanner:
                             # or self._is_rel_operator_start(current_char)
                             or self._is_left_paren(current_char)
                             or self._is_right_paren(current_char)
+                    ):
+                        if content_buffer.endswith('.'):
+                            raise LexicalError(f"Invalid number '{content_buffer}'")
+                        self.back()
+                        self.state = 0
+                        return Token(TokenType.NUMBER, content_buffer)
+                    else:
+                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'")
+                    
+            elif self.state == 4: # After '.'
+                if self._is_digit(current_char):
+                    content_buffer += current_char
+                else:
+                    if content_buffer.endswith('.'):
+                        raise LexicalError(f"Invalid number '{content_buffer}'")
+                    if (
+                        self._is_space(current_char)
+                        or self._is_math_operator(current_char)
+                        or self._is_assignment_operator(current_char)
+                        or self._is_left_paren(current_char)
+                        or self._is_right_paren(current_char)
                     ):
                         self.back()
                         self.state = 0
