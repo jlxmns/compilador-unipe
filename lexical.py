@@ -4,6 +4,7 @@ from typing import TextIO
 
 from errors import LexicalError
 from utils import TokenType
+from keywords import KEYWORDS
 
 
 class Token:
@@ -81,7 +82,8 @@ class Scanner:
                 if content_buffer:
                     if self.state == 1:
                         self.state = 0
-                        return Token(TokenType.IDENTIFIER, content_buffer)
+                        token_type = KEYWORDS.get(content_buffer, TokenType.IDENTIFIER)
+                        return Token(token_type, content_buffer)
                     elif self.state == 3 or self.state == 4:
                         if content_buffer.endswith('.'):
                             raise LexicalError(f"Invalid number '{content_buffer}'")
@@ -128,7 +130,9 @@ class Scanner:
                     ):
                         self.back()
                         self.state = 0
-                        return Token(TokenType.IDENTIFIER, content_buffer)
+
+                        token_type = KEYWORDS.get(content_buffer, TokenType.IDENTIFIER)
+                        return Token(token_type, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after identifier '{content_buffer}'")
                         

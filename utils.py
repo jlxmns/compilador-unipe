@@ -10,3 +10,10 @@ class TokenType(Enum):
   ASSIGNMENT = 4
   LEFT_PAREN = 5
   RIGHT_PAREN = 6
+
+  # Keywords
+  INT = 7
+  FLOAT = 8
+  PRINT = 9
+  IF = 10
+  ELSE = 11

@@ -13,3 +13,8 @@ y2+z3
 10.0
 .123
 8.5+7
+int
+float
+print
+if
+else
