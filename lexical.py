@@ -23,11 +23,17 @@ class Scanner:
     state: int
     source: list[str]
     pos: int
+    col: int
+    line: int
+    isComment: bool
 
     def __init__(self, source: TextIO):
         self.state = 0
         self.source = list(source.read())
         self.pos = 0
+        self.col = 0
+        self.line = 1
+        self.isComment = False
 
     @staticmethod
     def _is_letter(c: str) -> bool:
@@ -64,10 +70,40 @@ class Scanner:
     @staticmethod
     def _is_space(c: str) -> bool:
         return c == ' ' or c == '\n' or c == '\t' or c == '\r'
+    
+    def _is_comment(self, c: str) -> bool:
+        if c == '/' and not self._is_end_of_file():
+            nxt = self._next_char()
+            if nxt == '*':
+                self._skip_multiline_comment()
+                return True
+            else:
+                self.back()
+        self.isComment = c == '#' or self.isComment
+        return self.isComment
+    
+    def _skip_multiline_comment(self):
+        while not self._is_end_of_file():
+            c = self._next_char()
+            if c == '*' and not self._is_end_of_file():
+                nxt = self._next_char()
+                if nxt == '/':
+                    return
+                else:
+                    self.back()
+
 
     def _next_char(self) -> str:
         result = self.source[self.pos]
         self.pos += 1
+
+        if result == '\n' or result == '\r':
+            self.line += 1
+            self.col = 0
+            self.isComment = False
+        else:
+            self.col += 1
+            
         return result
 
     def _is_end_of_file(self) -> bool:
@@ -86,7 +122,7 @@ class Scanner:
                         return Token(token_type, content_buffer)
                     elif self.state == 3 or self.state == 4:
                         if content_buffer.endswith('.'):
-                            raise LexicalError(f"Invalid number '{content_buffer}'")
+                            raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.state = 0
                         return Token(TokenType.NUMBER, content_buffer)
                 return None
@@ -94,7 +130,9 @@ class Scanner:
             current_char = self._next_char()
 
             if self.state == 0:
-                if self._is_space(current_char):
+                if self._is_comment(current_char):
+                    continue
+                elif self._is_space(current_char):
                     continue
                 elif self._is_letter(current_char) or self._is_underscore(current_char):
                     content_buffer += current_char
@@ -134,7 +172,7 @@ class Scanner:
                         token_type = KEYWORDS.get(content_buffer, TokenType.IDENTIFIER)
                         return Token(token_type, content_buffer)
                     else:
-                        raise LexicalError(f"Invalid character '{current_char}' after identifier '{content_buffer}'")
+                        raise LexicalError(f"Invalid character '{current_char}' after identifier '{content_buffer}'", self.line, self.col)
                         
 
             # elif self.state == 2:
@@ -159,19 +197,19 @@ class Scanner:
                             or self._is_right_paren(current_char)
                     ):
                         if content_buffer.endswith('.'):
-                            raise LexicalError(f"Invalid number '{content_buffer}'")
+                            raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.back()
                         self.state = 0
                         return Token(TokenType.NUMBER, content_buffer)
                     else:
-                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'")
+                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
                     
             elif self.state == 4: # After '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
                 else:
                     if content_buffer.endswith('.'):
-                        raise LexicalError(f"Invalid number '{content_buffer}'")
+                        raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                     if (
                         self._is_space(current_char)
                         or self._is_math_operator(current_char)
@@ -183,7 +221,7 @@ class Scanner:
                         self.state = 0
                         return Token(TokenType.NUMBER, content_buffer)
                     else:
-                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'")
+                        raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
 
     def back(self):
         self.pos -= 1

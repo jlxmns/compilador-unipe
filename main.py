@@ -10,8 +10,13 @@ REL_OPERATOR:
 ASSIGNMENT?
   =
 """
-from lexical import Scanner
+# Grupo:
+# Marcelo Camilo
+# Gabriel Coutinho
+# Júlio Ximenes
+# Eduardo Henrique
 
+from lexical import Scanner
 
 def main():
     file_path = "programa.mc"
