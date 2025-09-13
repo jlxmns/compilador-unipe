@@ -18,3 +18,11 @@ float
 print
 if
 else
+invAlid
+#çh"ràct~er
+    #comentario com espaço
+comentario #no meio da linha
+/* inicio do comentario
+multiline
+@5/;4ççsc
+*/ endComment
