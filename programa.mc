@@ -1,5 +1,11 @@
 x y soma
 idade
+*
+-
+/
+>
+<
+>=
 soma2
 eduardo
 2
