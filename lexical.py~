@@ -157,7 +157,7 @@ class Scanner:
                         two_char = current_char + next_char
 
                     # caracteres relacionais validos
-                    if two_char in ('>=', '<=', '!=', '=='):
+                    if two_char in ('>=', '<=', '!', '=='):
                         return Token(TokenType.REL_OPERATOR, two_char)
                     else:
                         # Se não formou operador  "desfazemos" o peek (voltar o next_char)
