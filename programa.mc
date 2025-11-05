@@ -32,3 +32,6 @@ comentario #no meio da linha
 multiline
 @5/;4ççsc
 */ endComment
+
+teste = @
+?
