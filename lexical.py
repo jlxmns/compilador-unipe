@@ -70,6 +70,18 @@ class Scanner:
         return c == ')'
 
     @staticmethod
+    def _is_colon(c: str) -> bool:
+        return c == ':'
+
+    @staticmethod
+    def _is_block(c: str) -> bool:
+        return c == '{'
+
+    @staticmethod
+    def _is_end_block(c: str) -> bool:
+        return c == '}'
+
+    @staticmethod
     def _is_space(c: str) -> bool:
         return c == ' ' or c == '\n' or c == '\t' or c == '\r'
 
@@ -187,6 +199,12 @@ class Scanner:
                     return Token(TokenType.LEFT_PAREN, current_char)
                 elif self._is_right_paren(current_char):
                     return Token(TokenType.RIGHT_PAREN, current_char)
+                elif self._is_colon(current_char):
+                    return Token(TokenType.COLON, current_char)
+                elif self._is_block(current_char):
+                    return Token(TokenType.BLOCK, current_char)
+                elif self._is_end_block(current_char):
+                    return Token(TokenType.END_BLOCK, current_char)
                 else:
                     raise LexicalError(f"Invalid character '{current_char}'", self.line, self.col)
 
