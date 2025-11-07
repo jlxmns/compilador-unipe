@@ -23,6 +23,8 @@ class Scanner:
     pos: int
     col: int
     line: int
+    prev_col: int
+    prev_line: int
     isComment: bool
 
     def __init__(self, source: TextIO):
@@ -31,6 +33,8 @@ class Scanner:
         self.pos = 0
         self.col = 0
         self.line = 1
+        self.prev_col = 0
+        self.prev_line = 0
         self.isComment = False
 
     @staticmethod
@@ -92,6 +96,9 @@ class Scanner:
 
 
     def _next_char(self) -> str:
+        self.prev_line = self.line
+        self.prev_col = self.col
+
         result = self.source[self.pos]
         self.pos += 1
 
@@ -180,6 +187,8 @@ class Scanner:
                     return Token(TokenType.LEFT_PAREN, current_char)
                 elif self._is_right_paren(current_char):
                     return Token(TokenType.RIGHT_PAREN, current_char)
+                else:
+                    raise LexicalError(f"Invalid character '{current_char}'", self.line, self.col)
 
             # States for IDENTIFIER
             elif self.state == 1:
@@ -253,4 +262,6 @@ class Scanner:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
 
     def back(self):
+        self.col = self.prev_col
+        self.line = self.prev_line
         self.pos -= 1
