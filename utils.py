@@ -26,6 +26,9 @@ class TokenType(Enum):
   OR = 18
   AND = 19
   START = 20
-  ENDPROG = 21
-  DECLS = 22
-  ENDDECLS = 23
+  CODE = 21
+  ENDPROG = 22
+  DECLS = 23
+  ENDDECLS = 24
+  SCAN = 25
+  WHILE = 26
