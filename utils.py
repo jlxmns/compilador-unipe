@@ -13,17 +13,18 @@ class TokenType(Enum):
   COLON = 7
   BLOCK = 8
   END_BLOCK = 9
+  STRING = 10
 
   # Keywords
-  INT = 10
-  FLOAT = 11
-  PRINT = 12
-  IF = 13
-  ELSE = 14
-  THEN = 15
-  OR = 16
-  AND = 17
-  START = 18
-  END_PROG = 19
-  DECLS = 20
-  END_DECLS = 21
+  INT = 11
+  FLOAT = 12
+  PRINT = 13
+  IF = 14
+  ELSE = 15
+  THEN = 16
+  OR = 17
+  AND = 18
+  START = 19
+  ENDPROG = 20
+  DECLS = 21
+  ENDDECLS = 22

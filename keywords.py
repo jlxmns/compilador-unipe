@@ -10,7 +10,7 @@ KEYWORDS = {
     "or": TokenType.OR,
     "and": TokenType.AND,
     "start": TokenType.START,
-    "end_prog": TokenType.END_PROG,
+    "endprog": TokenType.ENDPROG,
     "decls": TokenType.DECLS,
-    "end_decls": TokenType.END_DECLS
+    "enddecls": TokenType.ENDDECLS
 }

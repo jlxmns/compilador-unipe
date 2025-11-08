@@ -142,6 +142,8 @@ class Scanner:
                             raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.state = 0
                         return Token(TokenType.NUMBER, content_buffer)
+                    elif self.state == 5 or self.state == 6:
+                        raise LexicalError(f"Unterminated string", self.line, self.col)
                 return None
 
             current_char = self._next_char()
@@ -160,6 +162,11 @@ class Scanner:
                 elif current_char == '.':
                     content_buffer += current_char
                     self.state = 4
+                elif current_char == '"':
+                    self.state = 5
+                elif current_char == "'":
+                    self.state = 6
+                
 
                 # caracteres relacionais
 
@@ -278,6 +285,24 @@ class Scanner:
                         return Token(TokenType.NUMBER, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
+
+            elif self.state == 5: # Reading String double quotes ("string") State
+                if current_char == '"':
+                    self.state = 0
+                    return Token(TokenType.STRING, content_buffer)
+                elif current_char == '\n' or current_char == '\r':
+                    raise LexicalError(f"Unterminated string", self.line, self.col)
+                else:
+                    content_buffer += current_char
+
+            elif self.state == 6: # Reading String single quotes ('string') State
+                if current_char == "'":
+                    self.state = 0
+                    return Token(TokenType.STRING, content_buffer)
+                elif current_char == '\n' or current_char == '\r':
+                    raise LexicalError(f"Unterminated string", self.line, self.col)
+                else:
+                    content_buffer += current_char
 
     def back(self):
         self.col = self.prev_col
