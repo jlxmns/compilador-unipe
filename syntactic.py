@@ -38,13 +38,13 @@ class Parser:
 
         self.match(TokenType.DECLS)
 
-        self.parse_decls()
+        self.parse_blocoDeclaracoes()
 
         self.match(TokenType.ENDDECLS)
 
         self.match(TokenType.CODE)
 
-        self.parse_block()
+        self.parse_blocoComandos()
 
         self.match(TokenType.ENDPROG)
 
