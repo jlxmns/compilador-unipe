@@ -137,11 +137,14 @@ class Scanner:
                         self.state = 0
                         token_type = KEYWORDS.get(content_buffer, TokenType.IDENTIFIER)
                         return Token(token_type, content_buffer)
-                    elif self.state == 3 or self.state == 4:
+                    elif self.state == 3:
+                        self.state = 0
+                        return Token(TokenType.NUMINT, content_buffer)
+                    elif self.state == 4:
                         if content_buffer.endswith('.'):
                             raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMREAL, content_buffer)
                     elif self.state == 5 or self.state == 6:
                         raise LexicalError(f"Unterminated string", self.line, self.col)
                 return None
@@ -243,7 +246,7 @@ class Scanner:
             #     self.state = 0
             #     return Token(TokenType.IDENTIFIER, content_buffer)
 
-            # States for NUMBER
+            # States for NUMBER INT
             elif self.state == 3: # before '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
@@ -263,11 +266,11 @@ class Scanner:
                             raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.back()
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMINT, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
 
-            elif self.state == 4: # After '.''
+            elif self.state == 4: # After '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
                 else:
@@ -282,7 +285,7 @@ class Scanner:
                     ):
                         self.back()
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMREAL, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
 
