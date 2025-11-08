@@ -20,3 +20,10 @@ class TokenType(Enum):
   PRINT = 12
   IF = 13
   ELSE = 14
+  THEN = 15
+  OR = 16
+  AND = 17
+  START = 18
+  END_PROG = 19
+  DECLS = 20
+  END_DECLS = 21
