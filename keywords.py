@@ -6,4 +6,14 @@ KEYWORDS = {
     "print": TokenType.PRINT,
     "if": TokenType.IF,
     "else": TokenType.ELSE,
+    "then": TokenType.THEN,
+    "or": TokenType.OR,
+    "and": TokenType.AND,
+    "start": TokenType.START,
+    "code": TokenType.CODE,
+    "endprog": TokenType.ENDPROG,
+    "decls": TokenType.DECLS,
+    "enddecls": TokenType.ENDDECLS,
+    "scan": TokenType.SCAN,
+    "while": TokenType.WHILE
 }

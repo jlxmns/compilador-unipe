@@ -70,6 +70,18 @@ class Scanner:
         return c == ')'
 
     @staticmethod
+    def _is_colon(c: str) -> bool:
+        return c == ':'
+
+    @staticmethod
+    def _is_block(c: str) -> bool:
+        return c == '{'
+
+    @staticmethod
+    def _is_end_block(c: str) -> bool:
+        return c == '}'
+
+    @staticmethod
     def _is_space(c: str) -> bool:
         return c == ' ' or c == '\n' or c == '\t' or c == '\r'
 
@@ -125,11 +137,16 @@ class Scanner:
                         self.state = 0
                         token_type = KEYWORDS.get(content_buffer, TokenType.IDENTIFIER)
                         return Token(token_type, content_buffer)
-                    elif self.state == 3 or self.state == 4:
+                    elif self.state == 3:
+                        self.state = 0
+                        return Token(TokenType.NUMINT, content_buffer)
+                    elif self.state == 4:
                         if content_buffer.endswith('.'):
                             raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMREAL, content_buffer)
+                    elif self.state == 5 or self.state == 6:
+                        raise LexicalError(f"Unterminated string", self.line, self.col)
                 return None
 
             current_char = self._next_char()
@@ -148,6 +165,11 @@ class Scanner:
                 elif current_char == '.':
                     content_buffer += current_char
                     self.state = 4
+                elif current_char == '"':
+                    self.state = 5
+                elif current_char == "'":
+                    self.state = 6
+                
 
                 # caracteres relacionais
 
@@ -187,6 +209,12 @@ class Scanner:
                     return Token(TokenType.LEFT_PAREN, current_char)
                 elif self._is_right_paren(current_char):
                     return Token(TokenType.RIGHT_PAREN, current_char)
+                elif self._is_colon(current_char):
+                    return Token(TokenType.COLON, current_char)
+                elif self._is_block(current_char):
+                    return Token(TokenType.BLOCK, current_char)
+                elif self._is_end_block(current_char):
+                    return Token(TokenType.END_BLOCK, current_char)
                 else:
                     raise LexicalError(f"Invalid character '{current_char}'", self.line, self.col)
 
@@ -218,7 +246,7 @@ class Scanner:
             #     self.state = 0
             #     return Token(TokenType.IDENTIFIER, content_buffer)
 
-            # States for NUMBER
+            # States for NUMBER INT
             elif self.state == 3: # before '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
@@ -238,11 +266,11 @@ class Scanner:
                             raise LexicalError(f"Invalid number '{content_buffer}'", self.line, self.col)
                         self.back()
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMINT, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
 
-            elif self.state == 4: # After '.''
+            elif self.state == 4: # After '.'
                 if self._is_digit(current_char):
                     content_buffer += current_char
                 else:
@@ -257,9 +285,27 @@ class Scanner:
                     ):
                         self.back()
                         self.state = 0
-                        return Token(TokenType.NUMBER, content_buffer)
+                        return Token(TokenType.NUMREAL, content_buffer)
                     else:
                         raise LexicalError(f"Invalid character '{current_char}' after number '{content_buffer}'", self.line, self.col)
+
+            elif self.state == 5: # Reading String double quotes ("string") State
+                if current_char == '"':
+                    self.state = 0
+                    return Token(TokenType.STRING, content_buffer)
+                elif current_char == '\n' or current_char == '\r':
+                    raise LexicalError(f"Unterminated string", self.line, self.col)
+                else:
+                    content_buffer += current_char
+
+            elif self.state == 6: # Reading String single quotes ('string') State
+                if current_char == "'":
+                    self.state = 0
+                    return Token(TokenType.STRING, content_buffer)
+                elif current_char == '\n' or current_char == '\r':
+                    raise LexicalError(f"Unterminated string", self.line, self.col)
+                else:
+                    content_buffer += current_char
 
     def back(self):
         self.col = self.prev_col

@@ -33,5 +33,15 @@ multiline
 @5/;4ççsc
 */ endComment
 
-teste = @
-?
+'aspas simples'
+"aspas duplas"
+then
+start
+decls
+enddecls
+{
+
+} 
+or
+and
+endprog

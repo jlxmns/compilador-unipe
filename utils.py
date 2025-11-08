@@ -4,16 +4,31 @@ from enum import Enum
 
 class TokenType(Enum):
   IDENTIFIER = 0
-  NUMBER = 1
-  MATH_OPERATOR = 2
-  REL_OPERATOR = 3
-  ASSIGNMENT = 4
-  LEFT_PAREN = 5
-  RIGHT_PAREN = 6
+  NUMINT = 1
+  NUMREAL = 2
+  MATH_OPERATOR = 3
+  REL_OPERATOR = 4
+  ASSIGNMENT = 5
+  LEFT_PAREN = 6
+  RIGHT_PAREN = 7
+  COLON = 8
+  BLOCK = 9
+  END_BLOCK = 10
+  STRING = 11
 
   # Keywords
-  INT = 7
-  FLOAT = 8
-  PRINT = 9
-  IF = 10
-  ELSE = 11
+  INT = 12
+  FLOAT = 13
+  PRINT = 14
+  IF = 15
+  ELSE = 16
+  THEN = 17
+  OR = 18
+  AND = 19
+  START = 20
+  CODE = 21
+  ENDPROG = 22
+  DECLS = 23
+  ENDDECLS = 24
+  SCAN = 25
+  WHILE = 26
