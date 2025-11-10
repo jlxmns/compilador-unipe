@@ -21,7 +21,7 @@ from syntactic import Parser
 from errors import SyntacticException, LexicalError
 
 def main():
-    file_path = "programa_ckp2_traduzido.mc"
+    file_path = "erros_programa_ckp2_traduzido.mc"
 
     try:
         with open(file_path, 'r') as file:
@@ -47,10 +47,10 @@ def main():
         print(f"Error: The file '{file_path}' was not found.")
     except SyntacticException as e:
         print(f"\n[COMPILATION ERROR]")
-        print(f"Syntactic Error: {e}")
+        print(f"{e}")
     except LexicalError as e:
         print(f"\n[COMPILATION ERROR]")
-        print(f"Lexical Error: {e}")
+        print(f"{e}")
     except Exception as e:
         print(f"An error occurred: {e}")
 

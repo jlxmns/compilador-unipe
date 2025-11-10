@@ -1,6 +1,6 @@
 from lexical import Scanner, Token
 from utils import TokenType
-from errors import SyntacticException
+from errors import SyntacticException, LexicalError
 
 class Parser:
     scanner: Scanner
@@ -12,27 +12,26 @@ class Parser:
         self.next_token()
 
     def next_token(self):
-        try:
-            self.token = self.scanner.next_token()
-        except Exception as e:
-            raise SyntacticException(f"Lexical Error: {e}")
+        self.token = self.scanner.next_token()
 
     def match(self, expected_type: TokenType):
         if self.token is None:
             raise SyntacticException(
-                f"Error: Unexpected end of file. Expected '{expected_type.name}'"
+                f"Unexpected end of file, expected '{expected_type.name}'",
+                self.scanner.line,
+                self.scanner.col
             )
         
         if self.token.token == expected_type:
 
-            print(f"   [MATCH OK] Token '{self.token.text}' ({expected_type.name}) consumed.")
+            print(f"[MATCH OK] Token '{self.token.text}' ({expected_type.name}) consumed.")
 
             self.next_token()
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}: "
-                f"Unexpected Token '{self.token.text}'. "
-                f"Expected '{expected_type.name}'."
+                f"Unexpected Token '{self.token.text}', expected '{expected_type.name}'",
+                self.scanner.line,
+                self.scanner.col
             )
     
     def parse_programa(self):
@@ -81,8 +80,9 @@ class Parser:
         
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}: "
-                f"Expected 'int' or 'float', found '{self.token.text}'."
+                f"Expected 'int' or 'float', found '{self.token.text}'",
+                self.scanner.line,
+                self.scanner.col
             )
         
     def parse_expressaoAritmetica(self):
@@ -140,8 +140,9 @@ class Parser:
         
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}: "
-                f"Expected Number, Identifier or '(', found '{self.token.text}'."
+                f"Expected Number, Identifier or '(', found '{self.token.text}'",
+                self.scanner,
+                self.scanner.col
             )
     
     def parse_expressaoRelacional(self):
@@ -179,9 +180,9 @@ class Parser:
         
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}: "
-                f"Expected start of an relacional expression (Identifier, Number or '('), "
-                f"found '{self.token.text}'."
+                f"Expected start of an relacional expression (Identifier, Number or '('), found '{self.token.text}'",
+                self.scanner.line,
+                self.scanner.col
             )
     
     def parse_operadorLogico(self):
@@ -197,8 +198,9 @@ class Parser:
 
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}"
-                f"Expected 'and' or 'or', found '{self.token.text}'."
+                f"Expected 'and' or 'or', found '{self.token.text}'",
+                self.scanner.line,
+                self.scanner.col
             )
     
     def parse_blocoComandos(self):
@@ -231,7 +233,11 @@ class Parser:
         #   subrotina;
 
         if self.token is None:
-            raise SyntacticException("Error: Unexpected end of file, expected a command.")
+            raise SyntacticException(
+                f"Unexpected end of file, expected a command",
+                self.scanner.line,
+                self.scanner.col
+            )
         
         elif self.token.token == TokenType.IDENTIFIER:
             self.parse_atribuicao()
@@ -252,7 +258,11 @@ class Parser:
             self.parse_subrotina()
 
         else:
-            raise SyntacticException(f"Error: '{self.token.text}' is not a valid start of a command.")
+            raise SyntacticException(
+                f"'{self.token.text}' is not a valid start of a command",
+                self.scanner.line,
+                self.scanner.col
+            )
     
     def parse_atribuicao(self):
         # REGRA: 
@@ -285,8 +295,9 @@ class Parser:
         
         else:
             raise SyntacticException(
-                f"Error on line {self.scanner.line}"
-                f"Expected Identifier or String in Print, found '{self.token.text}'."
+                f"Expected Identifier or String in Print, found '{self.token.text}'",
+                self.scanner.line,
+                self.scanner.col
             )
         
         self.match(TokenType.RIGHT_PAREN)
