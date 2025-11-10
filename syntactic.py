@@ -24,6 +24,9 @@ class Parser:
             )
         
         if self.token.token == expected_type:
+
+            print(f"   [MATCH OK] Token '{self.token.text}' ({expected_type.name}) consumed.")
+
             self.next_token()
         else:
             raise SyntacticException(
