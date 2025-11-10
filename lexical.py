@@ -231,6 +231,7 @@ class Scanner:
                             or self._is_assignment_operator(current_char)
                             or self._is_left_paren(current_char)
                             or self._is_right_paren(current_char)
+                            or self._is_colon(current_char)
                     ):
                         self.back()
                         self.state = 0
