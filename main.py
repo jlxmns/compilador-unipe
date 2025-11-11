@@ -21,7 +21,7 @@ from syntactic import Parser
 from errors import SyntacticException, LexicalError
 
 def main():
-    file_path = "erros_programa_ckp2_traduzido.mc"
+    file_path = "programa_ckp2_traduzido.mc"
 
     try:
         with open(file_path, 'r') as file:

@@ -220,7 +220,7 @@ class Scanner:
 
             # States for IDENTIFIER
             elif self.state == 1:
-                if self._is_letter(current_char) or self._is_digit(current_char):
+                if self._is_letter(current_char) or self._is_digit(current_char) or self._is_underscore(current_char):
                     content_buffer += current_char
                 else:
                     # Any character that ends IDENTIFIER

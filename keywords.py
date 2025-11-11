@@ -1,19 +1,21 @@
 from utils import TokenType
 
 KEYWORDS = {
-    "int": TokenType.INT,
-    "float": TokenType.FLOAT,
-    "print": TokenType.PRINT,
-    "if": TokenType.IF,
-    "else": TokenType.ELSE,
-    "then": TokenType.THEN,
-    "or": TokenType.OR,
-    "and": TokenType.AND,
-    "start": TokenType.START,
-    "code": TokenType.CODE,
-    "endprog": TokenType.ENDPROG,
-    "decls": TokenType.DECLS,
-    "enddecls": TokenType.ENDDECLS,
-    "scan": TokenType.SCAN,
-    "while": TokenType.WHILE
+    "INT": TokenType.INT,
+    "FLOAT": TokenType.FLOAT,
+    "ESCREVA": TokenType.PRINT,
+    "SE": TokenType.IF,
+    "SENAO": TokenType.ELSE,
+    "ENTAO": TokenType.THEN,
+    "OU": TokenType.OR,
+    "E": TokenType.AND,
+    "INICIO": TokenType.START,
+    "CODIGO": TokenType.CODE,
+    "FIMPROG": TokenType.ENDPROG,
+    "DECLS": TokenType.DECLS,
+    "FIMDECLS": TokenType.ENDDECLS,
+    "LEIA": TokenType.SCAN,
+    "REPITA": TokenType.WHILE,
+    "BLOCO": TokenType.BLOCK,
+    "FIMBLOCO": TokenType.END_BLOCK
 }

@@ -8,11 +8,11 @@ class Parser:
 
     def __init__(self, scanner: Scanner):
         self.scanner = scanner
-        self.token = None
+        self.token = None # type: ignore
         self.next_token()
 
     def next_token(self):
-        self.token = self.scanner.next_token()
+        self.token = self.scanner.next_token() # type: ignore
 
     def match(self, expected_type: TokenType):
         if self.token is None:
@@ -141,7 +141,7 @@ class Parser:
         else:
             raise SyntacticException(
                 f"Expected Number, Identifier or '(', found '{self.token.text}'",
-                self.scanner,
+                self.scanner, # type: ignore
                 self.scanner.col
             )
     
